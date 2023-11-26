@@ -1,0 +1,95 @@
+#to connect internet
+iwctl station connect
+
+#manage partition 
+fdisk ]
+
+#create partition 
+mkfs.fat -32 /dev/sda1
+mkfs.ext4 /dev/sda
+mkswap /dev/sda2
+
+#mount
+mount /dev/sda3 /mnt
+mkdir /mnt/efi
+mount /dev/sda1 /mnt/efi
+swapon /dev/sda2
+
+#mirror
+pacman -S reflector
+cp /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
+reflector --verbose --latest 10 --sort rate --save /etc/pacman.d/mirrorlist
+
+#install base system
+pacstrap /mnt base linux linux-firmware vim nano 
+
+#create fstab
+genfstab -U /mnt >> /mnt/etc/fstab
+cat /mnt/etc/fstab
+
+#Arch Linux System Configuration
+arch-chroot /mnt
+
+#timezone
+timedatectl list-timezones
+timedatectl set-timezone Time/Zone
+
+#set the locale
+sudo nano /etc/locale.gen
+en_US.UTF-8 UTF-8
+ms_MY.UTF-8 UTF-8
+
+#/etc/locale.conf
+1 LANG=en_US.UTF-8
+  2 LC_ADDRESS=ms_MY.UTF-8
+  3 LC_IDENTIFICATION=ms_MY.UTF-8
+  4 LC_MEASUREMENT=ms_MY.UTF-8
+  5 LC_MONETARY=ms_MY.UTF-8
+  6 LC_NAME=ms_MY.UTF-8
+  7 LC_NUMERIC=ms_MY.UTF-8
+  8 LC_PAPER=ms_MY.UTF-8
+  9 LC_TELEPHONE=ms_MY.UTF-8
+ 10 LC_TIME=ms_MY.UTF-8
+
+#hostname
+echo arch > /etc/hostname
+
+#hosts
+touch /etc/hosts
+
+127.0.0.1	localhost
+::1		localhost
+127.0.1.1	arch.localdomain	arch
+
+#root password
+passwd
+
+#user 
+useradd -m syed
+passwd syed
+
+#group
+usermod -aG wheel,audio,video,optical,storage
+
+#install sudo 
+pacman -S sudo 
+EDITOR=nano visudo
+
+#grub 
+pacman -S grub efibootmgr os-prober ntools dosfstools
+mkdir /boot/efi
+mount /dev/sdX1 /boot/efi
+grub-install --target=x86_64-efi --bootloader-id=GRUB --efi-directory=/boot/efi
+grub-mkconfig -o /boot/grub/grub.cfg
+
+#network
+pacman -S network manager
+
+#install git 
+pacman -S git 
+
+#enable network serive
+systemctl enable NetworkManager
+
+#unmount
+umount -l /mnt

@@ -1,0 +1,13 @@
+#!/bin/bash
+wallpaper=$(ls /home/syed/pix/wall/ | fzf) 
+wal -i /home/syed/pix/wall/$wallpaper
+sed -i 'N;$!P;D' /home/syed/.cache/wal/colors-wal-dwm.h
+# sed -i 's/#//g' .cache/wal/theme.yaml
+#wal-telegram --wal --tiled
+(cd /home/syed/github/dwm_wal/ && sudo make clean install> /dev/null)
+(cd /home/syed/github/dmenu/ && sudo make clean install> /dev/null)
+#(cd /home/syed/github/tabbed/ && doas make clean install> /dev/null)
+#(killall dwmblocks)
+#(killall xautolock)
+#(killall picom)
+#(killall telegram-desktop)
