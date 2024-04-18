@@ -53,7 +53,7 @@ XF86AudioMute
 
 #Mic 
 XF86AudioMicMute
-	pactl set-source-mute 1 toggle
+	amixer set Capture togglecap
 
 # Mpd
 super + shift + m
@@ -74,11 +74,32 @@ control + grave
 control + shift + grave
 		dunstctl close
 
+alt + shift + grave
+		dunstctl context
+
 XF86AudioPlay 
 		playerctl play-pause; notify-player.sh
 
 XF86AudioNext
-	playerctl next; sleep 1; notify-player.sh
+	playerctl next
 
 XF86AudioPrev
-	playerctl previous; sleep 1; notify-player.sh
+	playerctl previous
+
+control + shift + e
+	killall eww
+
+super + shift + d
+	launch_dashboard
+
+super + shift + n
+	notify.sh
+
+alt + shift + n
+	killall notify.sh
+
+alt + shift + e
+	rofi -modi emoji -show emoji
+
+alt + shift + c
+	rofi -modi "clipboard:greenclip print" -show 
